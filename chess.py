@@ -236,19 +236,21 @@ def drawPieces():
                     5,
                 )
 
+
 def drawCaptured():
     for i in range(len(captured_white)):
         index = piece_list.index(captured_white[i])
         screen.blit(
             small_white_images[index],
-            (645, i*45),
+            (645, i * 45),
         )
     for i in range(len(captured_black)):
         index = piece_list.index(captured_black[i])
         screen.blit(
             small_black_images[index],
-            (750, i*45),
+            (750, i * 45),
         )
+
 
 # function to check all pieces valid options on board
 def check_options(pieces, coordinates, phase):
@@ -295,6 +297,8 @@ def check_pawn(pos, color):
             )
             not in black_coordinates
             and pos[1] == 1
+            and (pos[0], pos[1] + 1) not in white_coordinates
+            and (pos[0], pos[1] + 1) not in black_coordinates
         ):
             moves_list.append((pos[0], pos[1] + 2))
 
@@ -323,6 +327,8 @@ def check_pawn(pos, color):
             )
             not in black_coordinates
             and pos[1] == 6
+            and (pos[0], pos[1] - 1) not in white_coordinates
+            and (pos[0], pos[1] - 1) not in black_coordinates
         ):
             moves_list.append((pos[0], pos[1] - 2))
 
@@ -373,8 +379,9 @@ def check_rook(pos, color):
 
     return moves_list
 
-def check_knight(pos,color):
-    moves_list=[]
+
+def check_knight(pos, color):
+    moves_list = []
     if color == "white":
         enemy_list = black_coordinates
         friends_list = white_coordinates
@@ -406,12 +413,17 @@ def check_knight(pos,color):
         else:
             x = -1
             y = 2
-        if (pos[0]+x,pos[1]+y) not in friends_list and 0<=pos[0]+x<=7 and 0<=pos[1]+y<=7:
-            moves_list.append((pos[0]+x,pos[1]+y))
+        if (
+            (pos[0] + x, pos[1] + y) not in friends_list
+            and 0 <= pos[0] + x <= 7
+            and 0 <= pos[1] + y <= 7
+        ):
+            moves_list.append((pos[0] + x, pos[1] + y))
     return moves_list
 
-def check_bishop(pos,color):
-    moves_list=[]
+
+def check_bishop(pos, color):
+    moves_list = []
     if color == "white":
         enemy_list = black_coordinates
         friends_list = white_coordinates
@@ -448,14 +460,17 @@ def check_bishop(pos,color):
                 path = False
 
     return moves_list
-def  check_queen(pos,color):
-    moves_list=[]
-    moves_list.extend(check_rook(pos,color))
-    moves_list.extend(check_bishop(pos,color))
+
+
+def check_queen(pos, color):
+    moves_list = []
+    moves_list.extend(check_rook(pos, color))
+    moves_list.extend(check_bishop(pos, color))
     return moves_list
-    
-def check_king(pos,color):
-    moves_list=[]
+
+
+def check_king(pos, color):
+    moves_list = []
     if color == "white":
         enemy_list = black_coordinates
         friends_list = white_coordinates
@@ -487,10 +502,13 @@ def check_king(pos,color):
         else:
             x = 0
             y = -1
-        if (pos[0]+x,pos[1]+y) not in friends_list and 0<=pos[0]+x<=7 and 0<=pos[1]+y<=7:
-            moves_list.append((pos[0]+x,pos[1]+y))
+        if (
+            (pos[0] + x, pos[1] + y) not in friends_list
+            and 0 <= pos[0] + x <= 7
+            and 0 <= pos[1] + y <= 7
+        ):
+            moves_list.append((pos[0] + x, pos[1] + y))
     return moves_list
-
 
 
 def draw_valid(moves):
