@@ -236,6 +236,19 @@ def drawPieces():
                     5,
                 )
 
+def drawCaptured():
+    for i in range(len(captured_white)):
+        index = piece_list.index(captured_white[i])
+        screen.blit(
+            small_white_images[index],
+            (645, i*45),
+        )
+    for i in range(len(captured_black)):
+        index = piece_list.index(captured_black[i])
+        screen.blit(
+            small_black_images[index],
+            (750, i*45),
+        )
 
 # function to check all pieces valid options on board
 def check_options(pieces, coordinates, phase):
@@ -510,6 +523,7 @@ while run:
     screen.fill("gray")
     drawBoard()
     drawPieces()
+    drawCaptured()
     if selection != 100:
         valid_moves = check_valid_moves()
         draw_valid(valid_moves)
@@ -528,7 +542,7 @@ while run:
                     white_coordinates[selection] = click_coordinates
                     if click_coordinates in black_coordinates:
                         black_piece = black_coordinates.index(click_coordinates)
-                        captured_white.append(black[black_piece])
+                        captured_black.append(black[black_piece])
                         black.pop(black_piece)
                         black_coordinates.pop(black_piece)
                     black_options = check_options(black, black_coordinates, "black")
@@ -545,7 +559,7 @@ while run:
                     black_coordinates[selection] = click_coordinates
                     if click_coordinates in white_coordinates:
                         white_piece = white_coordinates.index(click_coordinates)
-                        captured_black.append(white[white_piece])
+                        captured_white.append(white[white_piece])
                         white.pop(white_piece)
                         white_coordinates.pop(white_piece)
                     black_options = check_options(black, black_coordinates, "black")
