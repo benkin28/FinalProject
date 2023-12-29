@@ -89,7 +89,7 @@ captured_black = []
 current_phase = 0
 selection = 100
 valid_moves = []
-
+isInCheck = False
 # pieces
 black_queen = pygame.image.load("images/black-queen.png")
 black_queen = pygame.transform.scale(black_queen, (80, 80))
@@ -162,9 +162,11 @@ small_black_images = [
 ]
 piece_list = ["pawn", "queen", "king", "knight", "rook", "bishop"]
 # check variables
+counter = 0
 
 
 def drawBoard():
+    global isInCheck
     pygame.draw.rect(screen, "black", (0, 0, 640, 640), 5)
     pygame.draw.line(screen, "black", (0, 640), (640, 640), 10)
     pygame.draw.line(screen, "black", (640, 0), (640, 800), 10)
@@ -180,7 +182,12 @@ def drawBoard():
                 pygame.draw.rect(screen, "white", (i * 80, j * 80, 80, 80))
             else:
                 pygame.draw.rect(screen, "dark gray", (i * 80, j * 80, 80, 80))
-        screen.blit(big_font.render(status[current_phase], True, "black"), (20, 680))
+        if isInCheck == True:
+            screen.blit(big_font.render("King is in check", True, "red"), (20, 680))
+        else:
+            screen.blit(
+                big_font.render(status[current_phase], True, "black"), (20, 680)
+            )
 
 
 def drawPieces():
@@ -252,7 +259,57 @@ def drawCaptured():
         )
 
 
+def Check():
+    global isInCheck
+    if current_phase < 2:
+        king_index = white.index("king")
+        king_location = white_coordinates[king_index]
+        for i in range(len(black_options)):
+            if king_location in black_options[i]:
+                isInCheck = True
+                if counter < 15:
+                    pygame.draw.rect(
+                        screen,
+                        "red",
+                        [
+                            white_coordinates[king_index][0] * 80 + 1,
+                            white_coordinates[king_index][1] * 80 + 1,
+                            80,
+                            80,
+                        ],
+                        5,
+                    )
+    else:
+        king_index = black.index("king")
+        king_location = black_coordinates[king_index]
+        for i in range(len(white_options)):
+            if king_location in white_options[i]:
+                isInCheck = True
+                if counter < 15:
+                    pygame.draw.rect(
+                        screen,
+                        "blue",
+                        [
+                            black_coordinates[king_index][0] * 80 + 1,
+                            black_coordinates[king_index][1] * 80 + 1,
+                            80,
+                            80,
+                        ],
+                        5,
+                    )
+
+
 # function to check all pieces valid options on board
+
+
+def gameOver():
+    pygame.draw.rect(screen, "black", [80, 180, 480, 200],border_radius=30)
+    screen.blit(big_font.render(f'Game Over', True, "white"), (220, 200))
+    screen.blit(big_font.render(f'{winner} wins', True, "white"), (220, 280))
+
+
+
+
 def check_options(pieces, coordinates, phase):
     moveList = []
     allMovesList = []
@@ -535,14 +592,24 @@ black_options = check_options(black, black_coordinates, "black")
 white_options = check_options(white, white_coordinates, "white")
 
 run = True
+isGameOver=False
+
 while run:
     pygame.display.update()
-    timer.tick(fps)
-    screen.fill("gray")
-    drawBoard()
-    drawPieces()
-    drawCaptured()
-    if selection != 100:
+    if not isGameOver:
+        timer.tick(fps)
+        if counter < 30:
+            counter += 1
+        else:
+            counter = 0
+        screen.fill("gray")
+        isInCheck = False
+        Check()
+        drawBoard()
+        drawPieces()
+        drawCaptured()
+        Check()
+    if selection != 100 and not isGameOver:
         valid_moves = check_valid_moves()
         draw_valid(valid_moves)
     print(current_phase)
@@ -585,6 +652,14 @@ while run:
                     current_phase = 0
                     selection = 100
                     valid_moves = []
+    if captured_black.count("king") == 1: 
+        winner="white"
+        isGameOver=True
+        gameOver()
+    elif captured_white.count("king") == 1:
+        isGameOver=True
+        winner="black"
+        gameOver()
 
 pygame.display.flip()
 pygame.quit()
