@@ -167,9 +167,9 @@ counter = 0
 
 def drawBoard():
     global isInCheck
-    pygame.draw.rect(screen, "black", (0, 0, 640, 640), 5)
-    pygame.draw.line(screen, "black", (0, 640), (640, 640), 10)
-    pygame.draw.line(screen, "black", (640, 0), (640, 800), 10)
+    pygame.draw.rect(screen, "Black", (0, 0, 640, 640), 5)
+    pygame.draw.line(screen, "Black", (0, 640), (640, 640), 10)
+    pygame.draw.line(screen, "Black", (640, 0), (640, 800), 10)
     status = [
         "White: It is your turn",
         "White: Select a field to move to",
@@ -179,14 +179,14 @@ def drawBoard():
     for i in range(8):
         for j in range(8):
             if (i + j) % 2 == 0:
-                pygame.draw.rect(screen, "white", (i * 80, j * 80, 80, 80))
+                pygame.draw.rect(screen, "White", (i * 80, j * 80, 80, 80))
             else:
                 pygame.draw.rect(screen, "dark gray", (i * 80, j * 80, 80, 80))
         if isInCheck == True:
             screen.blit(big_font.render("King is in check", True, "red"), (20, 680))
         else:
             screen.blit(
-                big_font.render(status[current_phase], True, "black"), (20, 680)
+                big_font.render(status[current_phase], True, "Black"), (20, 680)
             )
 
 
@@ -303,11 +303,10 @@ def Check():
 
 
 def gameOver():
-    pygame.draw.rect(screen, "black", [80, 180, 480, 200],border_radius=30)
-    screen.blit(big_font.render(f'Game Over', True, "white"), (220, 200))
-    screen.blit(big_font.render(f'{winner} wins', True, "white"), (220, 280))
-
-
+    if isGameOver:
+        pygame.draw.rect(screen, "Black", [80, 180, 480, 200], border_radius=30)
+        screen.blit(big_font.render(f"{winner} Wins", True, "White"), (210, 200))
+        screen.blit(big_font.render(f"Press enter to reset", True, "White"), (140, 270))
 
 
 def check_options(pieces, coordinates, phase):
@@ -335,7 +334,7 @@ def check_options(pieces, coordinates, phase):
 
 def check_pawn(pos, color):
     moves_list = []
-    if color == "white":
+    if color == "White":
         if (
             (pos[0], pos[1] + 1) not in white_coordinates
             and (
@@ -399,7 +398,7 @@ def check_pawn(pos, color):
 
 def check_rook(pos, color):
     moves_list = []
-    if color == "white":
+    if color == "White":
         enemy_list = black_coordinates
         friends_list = white_coordinates
     else:
@@ -439,7 +438,7 @@ def check_rook(pos, color):
 
 def check_knight(pos, color):
     moves_list = []
-    if color == "white":
+    if color == "White":
         enemy_list = black_coordinates
         friends_list = white_coordinates
     else:
@@ -481,7 +480,7 @@ def check_knight(pos, color):
 
 def check_bishop(pos, color):
     moves_list = []
-    if color == "white":
+    if color == "White":
         enemy_list = black_coordinates
         friends_list = white_coordinates
     else:
@@ -528,7 +527,7 @@ def check_queen(pos, color):
 
 def check_king(pos, color):
     moves_list = []
-    if color == "white":
+    if color == "White":
         enemy_list = black_coordinates
         friends_list = white_coordinates
     else:
@@ -588,11 +587,11 @@ def check_valid_moves():
     return valid_options
 
 
-black_options = check_options(black, black_coordinates, "black")
-white_options = check_options(white, white_coordinates, "white")
+black_options = check_options(black, black_coordinates, "Black")
+white_options = check_options(white, white_coordinates, "White")
 
 run = True
-isGameOver=False
+isGameOver = False
 
 while run:
     pygame.display.update()
@@ -612,7 +611,6 @@ while run:
     if selection != 100 and not isGameOver:
         valid_moves = check_valid_moves()
         draw_valid(valid_moves)
-    print(current_phase)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -630,8 +628,8 @@ while run:
                         captured_black.append(black[black_piece])
                         black.pop(black_piece)
                         black_coordinates.pop(black_piece)
-                    black_options = check_options(black, black_coordinates, "black")
-                    white_options = check_options(white, white_coordinates, "white")
+                    black_options = check_options(black, black_coordinates, "Black")
+                    white_options = check_options(white, white_coordinates, "White")
                     current_phase = 2
                     selection = 100
                     valid_moves = []
@@ -647,18 +645,101 @@ while run:
                         captured_white.append(white[white_piece])
                         white.pop(white_piece)
                         white_coordinates.pop(white_piece)
-                    black_options = check_options(black, black_coordinates, "black")
-                    white_options = check_options(white, white_coordinates, "white")
+                    black_options = check_options(black, black_coordinates, "Black")
+                    white_options = check_options(white, white_coordinates, "White")
                     current_phase = 0
                     selection = 100
                     valid_moves = []
-    if captured_black.count("king") == 1: 
-        winner="white"
-        isGameOver=True
+        if event.type == pygame.KEYDOWN and isGameOver:
+            if event.key == pygame.K_RETURN:
+                print("test")
+                isGameOver = False
+                white = [
+                    "rook",
+                    "knight",
+                    "bishop",
+                    "king",
+                    "queen",
+                    "bishop",
+                    "knight",
+                    "rook",
+                    "pawn",
+                    "pawn",
+                    "pawn",
+                    "pawn",
+                    "pawn",
+                    "pawn",
+                    "pawn",
+                    "pawn",
+                ]
+                white_coordinates = [
+                    (0, 0),
+                    (1, 0),
+                    (2, 0),
+                    (3, 0),
+                    (4, 0),
+                    (5, 0),
+                    (6, 0),
+                    (7, 0),
+                    (0, 1),
+                    (1, 1),
+                    (2, 1),
+                    (3, 1),
+                    (4, 1),
+                    (5, 1),
+                    (6, 1),
+                    (7, 1),
+                ]
+                black = [
+                    "rook",
+                    "knight",
+                    "bishop",
+                    "king",
+                    "queen",
+                    "bishop",
+                    "knight",
+                    "rook",
+                    "pawn",
+                    "pawn",
+                    "pawn",
+                    "pawn",
+                    "pawn",
+                    "pawn",
+                    "pawn",
+                    "pawn",
+                ]
+                black_coordinates = [
+                    (0, 7),
+                    (1, 7),
+                    (2, 7),
+                    (3, 7),
+                    (4, 7),
+                    (5, 7),
+                    (6, 7),
+                    (7, 7),
+                    (0, 6),
+                    (1, 6),
+                    (2, 6),
+                    (3, 6),
+                    (4, 6),
+                    (5, 6),
+                    (6, 6),
+                    (7, 6),
+                ]
+                captured_white = []
+                captured_black = []
+                current_phase = 0
+                selection = 100
+                valid_moves = []
+                black_options = check_options(black, black_coordinates, "Black")
+                white_options = check_options(white, white_coordinates, "White")
+    if captured_black.count("king") == 1:
+        winner = "White"
+        isGameOver = True
         gameOver()
     elif captured_white.count("king") == 1:
-        isGameOver=True
-        winner="black"
+        isGameOver = True
+        winner = "Black"
         gameOver()
 
 pygame.display.flip()
