@@ -1,8 +1,10 @@
-import pygame 
+import pygame
 
-pieces = ["rook", "knight", "bishop", "queen", "king", "bishop", "knight", "rook"] + ["pawn"] * 8
-white = pieces
-black = pieces
+pieces = ["rook", "knight", "bishop", "king", "queen", "bishop", "knight", "rook"] + [
+    "pawn"
+] * 8
+white = pieces.copy()
+black = pieces.copy()
 WhiteCoordinates = [(i % 8, i // 8) for i in range(16)]
 BlackCoordinates = [(i % 8, 7 - i // 8) for i in range(16)]
 
@@ -77,27 +79,3 @@ small_black_images = [
     black_bishop_small,
 ]
 piece_list = ["pawn", "queen", "king", "knight", "rook", "bishop"]
-
-def drawBoard(screen,big_font):
-    global isInCheck
-    pygame.draw.rect(screen, "Black", (0, 0, 640, 640), 5)
-    pygame.draw.line(screen, "Black", (0, 640), (640, 640), 10)
-    pygame.draw.line(screen, "Black", (640, 0), (640, 800), 10)
-    status = [
-        "White: It is your turn",
-        "White: Select a field to move to",
-        "Black: It is your turn",
-        "Black: Select a field to move to",
-    ]
-    for i in range(8):
-        for j in range(8):
-            if (i + j) % 2 == 0:
-                pygame.draw.rect(screen, "White", (i * 80, j * 80, 80, 80))
-            else:
-                pygame.draw.rect(screen, "dark gray", (i * 80, j * 80, 80, 80))
-        if isInCheck == True:
-            screen.blit(big_font.render("King is in check", True, "red"), (20, 680))
-        else:
-            screen.blit(
-                big_font.render(status[current_phase], True, "Black"), (20, 680)
-            )

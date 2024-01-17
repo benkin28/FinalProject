@@ -10,6 +10,7 @@ from init import (
     small_white_images,
     small_black_images,
     piece_list,
+    pieces,
 )
 
 pygame.init()
@@ -46,9 +47,9 @@ def drawBoard(screen, big_font):
     for i in range(8):
         for j in range(8):
             if (i + j) % 2 == 0:
-                pygame.draw.rect(screen, "White", (i * 80, j * 80, 80, 80))
+                pygame.draw.rect(screen, (255, 255, 255), (i * 80, j * 80, 80, 80))
             else:
-                pygame.draw.rect(screen, "dark gray", (i * 80, j * 80, 80, 80))
+                pygame.draw.rect(screen, (45, 98, 177, 255), (i * 80, j * 80, 80, 80))
         if isInCheck == True:
             screen.blit(big_font.render("King is in check", True, "red"), (20, 680))
         else:
@@ -64,7 +65,7 @@ def drawWhite():
         if white[i] == "pawn":
             screen.blit(
                 white_images[index],
-                (WhiteCoordinates[i][0] * 80 + 5, WhiteCoordinates[i][1] * 80),
+                (WhiteCoordinates[i][0] * 80 + 5, WhiteCoordinates[i][1] * 80 + 5),
             )
         else:
             screen.blit(
@@ -92,7 +93,7 @@ def drawBlack():
         if black[i] == "pawn":
             screen.blit(
                 black_images[index],
-                (BlackCoordinates[i][0] * 80 + 5, BlackCoordinates[i][1] * 80),
+                (BlackCoordinates[i][0] * 80 + 5, BlackCoordinates[i][1] * 80 + 5),
             )
         else:
             screen.blit(
@@ -203,14 +204,11 @@ def validMoves(pieces, coordinates, phase):
             moveList = Queen(coordinate, phase)
         elif piece == "king":
             moveList = King(coordinate, phase)
-
         allMovesList.append(moveList)
     return allMovesList
 
 
 def Pawn(pos, color):
-    global WhiteCoordinates
-    global BlackCoordinates
     Move = []
     direction = 0
     startingPositon = 0
@@ -232,7 +230,7 @@ def Pawn(pos, color):
             pos[1] + direction,
         )
         not in enemycoords
-        and pos[1] < 7
+        and (pos[1] < 6 if color == "White" else pos[1] > 1)
     ):
         Move.append((pos[0], pos[1] + direction))
     if (
@@ -363,7 +361,7 @@ def King(pos, color):
 
 
 def drawValidMoves(moves):
-    color = "red" if current_phase < 2 else "blue"
+    color = "red" if current_phase < 2 else "light blue"
     for move in moves:
         pygame.draw.circle(screen, color, (move[0] * 80 + 40, move[1] * 80 + 40), 5)
 
@@ -439,29 +437,10 @@ def update_options():
 
 def reset_game():
     global isGameOver, white, WhiteCoordinates, black, BlackCoordinates, captured_white, captured_black, current_phase, selection, valid_moves, black_options, white_options
-    print("test")
     isGameOver = False
-    white = [
-        "rook",
-        "knight",
-        "bishop",
-        "king",
-        "queen",
-        "bishop",
-        "knight",
-        "rook",
-    ] + ["pawn"] * 8
+    white = pieces.copy()
     WhiteCoordinates = [(i % 8, i // 8) for i in range(16)]
-    black = [
-        "rook",
-        "knight",
-        "bishop",
-        "king",
-        "queen",
-        "bishop",
-        "knight",
-        "rook",
-    ] + ["pawn"] * 8
+    black = pieces.copy()
     BlackCoordinates = [(i % 8, 7 - i // 8) for i in range(16)]
     captured_white = []
     captured_black = []
